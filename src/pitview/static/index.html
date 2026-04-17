@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PitView — Team 1317</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header id="statusbar">
+    <div class="status-left">
+      <span class="team">&#9670; 1317</span>
+      <span id="conn-nt" class="badge disconnected">NT</span>
+      <span id="conn-rio" class="badge disconnected">RIO</span>
+    </div>
+    <div class="status-center">
+      <span id="robot-mode" class="mode-label">--</span>
+      <span id="match-time" class="match-time">--:--</span>
+    </div>
+    <div class="status-right">
+      <span class="label">Battery</span>
+      <span id="battery" class="value highlight">--V</span>
+    </div>
+  </header>
+
+  <nav id="sidebar">
+    <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+    <button class="nav-btn" data-page="nt">NT Explorer</button>
+    <button class="nav-btn" data-page="cameras">Cameras</button>
+    <button class="nav-btn" data-page="photonvision">PhotonVision</button>
+    <button class="nav-btn" data-page="radio">Radio</button>
+    <button class="nav-btn" data-page="system">System</button>
+  </nav>
+
+  <main id="content">
+    <!-- Dashboard -->
+    <section id="page-dashboard" class="page active">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Drive</h3>
+          <div class="kv-list" id="kv-drive"></div>
+        </div>
+        <div class="card">
+          <h3>Vision</h3>
+          <div class="kv-list" id="kv-vision"></div>
+        </div>
+        <div class="card">
+          <h3>Subsystems</h3>
+          <div class="kv-list" id="kv-subsystems"></div>
+        </div>
+        <div class="card">
+          <h3>Match</h3>
+          <div class="kv-list" id="kv-match"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NT Explorer -->
+    <section id="page-nt" class="page">
+      <div class="toolbar">
+        <input id="nt-filter" type="text" placeholder="Filter keys..." />
+        <span id="nt-count" class="dim"></span>
+      </div>
+      <div class="nt-tree" id="nt-tree"></div>
+    </section>
+
+    <!-- Cameras -->
+    <section id="page-cameras" class="page">
+      <div class="camera-grid" id="camera-grid">
+        <div class="camera-card">
+          <div class="camera-label">BOULDER (Shooter)</div>
+          <img class="camera-feed" src="http://photonvision.local:1182/stream.mjpeg" onerror="this.src='/static/no-feed.svg'" />
+        </div>
+        <div class="camera-card">
+          <div class="camera-label">STONE (Battery-side)</div>
+          <img class="camera-feed" src="http://photonvision.local:1184/stream.mjpeg" onerror="this.src='/static/no-feed.svg'" />
+        </div>
+        <div class="camera-card">
+          <div class="camera-label">PEBBLE (Intake)</div>
+          <img class="camera-feed" src="http://photonvision.local:1186/stream.mjpeg" onerror="this.src='/static/no-feed.svg'" />
+        </div>
+      </div>
+    </section>
+
+    <!-- PhotonVision embedded -->
+    <section id="page-photonvision" class="page iframe-page">
+      <iframe id="frame-photon" src="about:blank" allow="*" data-url="{{PHOTON_URL}}"></iframe>
+    </section>
+
+    <!-- Radio embedded -->
+    <section id="page-radio" class="page iframe-page">
+      <iframe id="frame-radio" src="about:blank" allow="*" data-url="{{RADIO_URL}}"></iframe>
+    </section>
+
+    <!-- System -->
+    <section id="page-system" class="page">
+      <div class="grid-2">
+        <div class="card">
+          <h3>RoboRIO</h3>
+          <div class="kv-list" id="kv-rio"></div>
+        </div>
+        <div class="card">
+          <h3>CAN Bus</h3>
+          <div class="kv-list" id="kv-can"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
