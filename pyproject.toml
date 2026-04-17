@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pitview"
+version = "0.1.0"
+description = "FRC robot dashboard: NT4 live data, PhotonVision cameras, radio, and system stats for Team 1317"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = ["fastapi","uvicorn" "websockets","robotpy-ntcore" "pywebview","requests"]
+
+[project.optional-dependencies]
+dev = ["pytest", "fastapi","uvicorn" "websockets","robotpy-ntcore" "pywebview","requests"]
+
+[project.scripts]
+pitview = "pitview.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pitview*"]
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]
