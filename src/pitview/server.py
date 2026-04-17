@@ -60,7 +60,7 @@ def _nt_update(event: dict):
 @app.on_event("startup")
 async def startup():
     global _loop, nt, _rio_poller
-    _loop = asyncio.get_event_loop()
+    _loop = asyncio.get_running_loop()
 
     nt = NTClient(
         team=config["nt_team"],

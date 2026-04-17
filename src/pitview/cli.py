@@ -1,5 +1,7 @@
+import sys
 import threading
 import time
+import traceback
 
 import click
 import uvicorn
@@ -31,12 +33,38 @@ def main(port, nt_host, rio_host, rio_port, radio_host, radio_port, photon_host,
         "photon_port": photon_port,
     })
 
+    server_error: list[Exception] = []
+
     def run_server():
-        uvicorn.run(app, host="127.0.0.1", port=port, log_level="error")
+        try:
+            uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
+        except Exception as e:
+            server_error.append(e)
+            traceback.print_exc()
 
     server_thread = threading.Thread(target=run_server, daemon=True)
     server_thread.start()
-    time.sleep(1.0)
+
+    # Wait for server to be ready (poll rather than blind sleep)
+    import urllib.request
+    deadline = time.time() + 5.0
+    ready = False
+    while time.time() < deadline:
+        try:
+            urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=0.3)
+            ready = True
+            break
+        except Exception:
+            time.sleep(0.1)
+
+    if server_error:
+        click.echo(f"ERROR: Server failed to start: {server_error[0]}", err=True)
+        sys.exit(1)
+
+    if not ready:
+        click.echo(f"ERROR: Server did not become ready within 5s on port {port}", err=True)
+        click.echo("Run with --no-window to see server errors.", err=True)
+        sys.exit(1)
 
     if no_window:
         click.echo(f"PitView running at http://127.0.0.1:{port}")
@@ -45,7 +73,7 @@ def main(port, nt_host, rio_host, rio_port, radio_host, radio_port, photon_host,
 
     try:
         import webview
-        window = webview.create_window(
+        webview.create_window(
             "PitView — Team 1317",
             f"http://127.0.0.1:{port}",
             width=1440,
@@ -56,6 +84,9 @@ def main(port, nt_host, rio_host, rio_port, radio_host, radio_port, photon_host,
     except ImportError:
         click.echo(f"pywebview not installed — open http://127.0.0.1:{port} in a browser")
         server_thread.join()
+    except Exception as e:
+        click.echo(f"ERROR: WebView failed: {e}", err=True)
+        traceback.print_exc()
 
 
 if __name__ == "__main__":

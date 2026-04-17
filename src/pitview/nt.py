@@ -23,7 +23,7 @@ class NTClient:
     def start(self):
         if not NT_AVAILABLE:
             return
-        self._inst = ntcore.NetworkTableInstance.getDefault()
+        self._inst = ntcore.NetworkTableInstance.create()
         self._inst.startClient4("pitview")
         if self.host:
             self._inst.setServer(self.host)
